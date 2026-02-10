@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # Основное приложение
   app:
     build: .
     container_name: ml_service_app
@@ -12,8 +9,10 @@ services:
       - ./app:/app/app
       - ./logs:/app/logs
     depends_on:
-      - database
-      - rabbitmq
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
       - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672/
@@ -25,7 +24,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # Nginx reverse proxy
   web-proxy:
     image: nginx:alpine
     container_name: ml_service_nginx
@@ -43,19 +41,18 @@ services:
     networks:
       - ml_network
 
-  # RabbitMQ для очередей сообщений
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: ml_service_rabbitmq
-    restart: always  # Перезагружаться при сбоях
+    restart: always
     ports:
-      - "5672:5672"   # AMQP порт
-      - "15672:15672" # Management UI порт
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq  # Сохранение очередей
+      - rabbitmq_data:/var/lib/rabbitmq
       - ./logs/rabbitmq:/var/log/rabbitmq
     networks:
       - ml_network
@@ -65,7 +62,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # PostgreSQL база данных
   database:
     image: postgres:15-alpine
     container_name: ml_service_postgres
@@ -75,7 +71,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Сохранение БД
+      - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./logs/postgres:/var/log/postgresql
     ports:
