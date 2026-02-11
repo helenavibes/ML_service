@@ -4,7 +4,7 @@ services:
     container_name: ml_service_app
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.example
     volumes:
       - ./app:/app/app
       - ./logs:/app/logs
@@ -32,7 +32,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./web/static:/usr/share/nginx/html/static
       - ./web/templates:/usr/share/nginx/html/templates
       - ./logs/nginx:/var/log/nginx
@@ -44,7 +44,7 @@ services:
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: ml_service_rabbitmq
-    restart: always
+    restart: on-failure  # ПРАВИЛЬНО: перезагружаться при сбоях
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -72,7 +72,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./logs/postgres:/var/log/postgresql
     ports:
       - "5432:5432"

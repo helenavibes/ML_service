@@ -48,3 +48,5 @@ logs/
 # Database
 *.db
 *.sqlite3
+.env
+.env.local
