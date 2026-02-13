@@ -10,12 +10,15 @@ class TransactionDB(Base):
     __tablename__ = "transactions"
     
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    
+    # ✅ Отдельное поле для типа транзакции!
     transaction_type = Column(Enum(TransactionType), nullable=False)
+    
     amount = Column(Float, nullable=False)
-    description = Column(Text)
-    task_id = Column(String(36), index=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+    description = Column(Text, nullable=True)  # Описание, не тип!
+    task_id = Column(String(36), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     
     user = relationship("UserDB", backref="transactions")
     

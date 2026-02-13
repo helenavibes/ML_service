@@ -5,49 +5,69 @@
 
 from sqlalchemy.orm import Session
 from app.database.database import SessionLocal, init_db as create_tables
-from app.crud.user import crud_user, UserCreate
-from app.crud.transaction import crud_transaction
+from app.models.db.user import UserDB
 from app.models.db.ml_model import MLModelDB
-from app.models.enums import ModelType
+from app.models.db.transaction import TransactionDB
+from app.models.enums import UserRole, ModelType, TransactionType
+from passlib.context import CryptContext
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def init_demo_data(db: Session) -> None:
     """Создание демо-пользователей и моделей"""
     
     # 1. Создаем демо-пользователя
-    demo_user = crud_user.get_by_username(db, username="demo_user")
+    demo_user = db.query(UserDB).filter(UserDB.username == "demo_user").first()
     if not demo_user:
-        user_in = UserCreate(
+        demo_user = UserDB(
             username="demo_user",
             email="demo@example.com",
-            password="demo123",
-            balance=100.0
+            password_hash=pwd_context.hash("demo123"),
+            role=UserRole.USER,  # ✅ Используем Enum, не строку!
+            balance=100.0,
+            is_active=True
         )
-        demo_user = crud_user.create(db, obj_in=user_in)
+        db.add(demo_user)
+        db.flush()  # Получаем ID без коммита
         logger.info("✅ Создан демо-пользователь: demo_user")
         
         # Создаем транзакцию пополнения
-        crud_transaction.create_deposit(
-            db,
+        transaction = TransactionDB(
             user_id=demo_user.id,
+            transaction_type=TransactionType.DEPOSIT,  # ✅ Используем Enum
             amount=100.0,
             description="Начальный баланс"
         )
+        db.add(transaction)
+        logger.info("✅ Создана транзакция пополнения для demo_user")
+    else:
+        # Проверяем и исправляем роль если нужно
+        if demo_user.role != UserRole.USER:
+            demo_user.role = UserRole.USER
+            logger.info("✅ Исправлена роль demo_user на USER")
     
     # 2. Создаем администратора
-    admin = crud_user.get_by_username(db, username="admin")
+    admin = db.query(UserDB).filter(UserDB.username == "admin").first()
     if not admin:
-        admin_in = UserCreate(
+        admin = UserDB(
             username="admin",
             email="admin@example.com",
-            password="admin123",
-            balance=1000.0
+            password_hash=pwd_context.hash("admin123"),
+            role=UserRole.ADMIN,  # ✅ Используем Enum, не строку!
+            balance=1000.0,
+            is_active=True
         )
-        admin = crud_user.create(db, obj_in=admin_in)
-        logger.info("✅ Создан администратор: admin")
+        db.add(admin)
+        db.flush()
+        logger.info("✅ Создан администратор: admin (role: ADMIN)")
+    else:
+        # Проверяем и исправляем роль если нужно
+        if admin.role != UserRole.ADMIN:
+            admin.role = UserRole.ADMIN
+            logger.info("✅ Исправлена роль администратора на ADMIN")
     
     # 3. Создаем ML модели
     models = [
@@ -82,20 +102,25 @@ def init_demo_data(db: Session) -> None:
             logger.info(f"✅ Создана ML модель: {model_data['name']}")
     
     db.commit()
+    logger.info("✅ Все изменения сохранены в БД")
 
 def main() -> None:
     """Главная функция инициализации"""
     logger.info("🚀 Начало инициализации базы данных")
     
-    # 1. Создаем таблицы
     create_tables()
     logger.info("✅ Таблицы созданы")
     
-    # 2. Создаем сессию и заполняем данными
     db = SessionLocal()
     try:
         init_demo_data(db)
         logger.info("✅ Демо-данные добавлены")
+        
+        # Проверка роли администратора
+        admin = db.query(UserDB).filter(UserDB.username == "admin").first()
+        if admin:
+            logger.info(f"✅ Администратор: {admin.username}, роль: {admin.role.value}")
+        
     except Exception as e:
         logger.error(f"❌ Ошибка: {e}")
         db.rollback()

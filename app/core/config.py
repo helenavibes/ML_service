@@ -21,8 +21,12 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    POSTGRES_HOST: str = "database"
+    POSTGRES_HOST: str
     POSTGRES_PORT: int = 5432
+    
+    # Настройки пула соединений
+    POOL_SIZE: int = 5
+    MAX_OVERFLOW: int = 10
     
     # RabbitMQ
     RABBITMQ_URL: str

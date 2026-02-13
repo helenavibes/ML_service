@@ -1,21 +1,22 @@
 from enum import Enum
 
 class UserRole(Enum):
-    USER = "user"
-    ADMIN = "admin"
+    USER = "USER"
+    ADMIN = "ADMIN"
 
 class TransactionType(Enum):
-    DEPOSIT = "deposit"
-    WITHDRAWAL = "withdrawal"
-    REFUND = "refund"
+    DEPOSIT = "DEPOSIT"
+    WITHDRAWAL = "WITHDRAWAL"
+    REFUND = "REFUND"
 
 class TaskStatus(Enum):
-    PENDING = "pending"
-    PROCESSING = "processing"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    VALIDATION_ERROR = "validation_error"
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    VALIDATION_ERROR = "VALIDATION_ERROR"
 
 class ModelType(Enum):
-    CLASSIFICATION = "classification"
-    REGRESSION = "regression"
+    CLASSIFICATION = "CLASSIFICATION"
+    REGRESSION = "REGRESSION"
+    # CLUSTERING = "CLUSTERING"  # Раскомментировать когда понадобится
