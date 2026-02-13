@@ -4,8 +4,8 @@ import uvicorn
 
 from app.core.config import settings
 from app.api.v1.api import api_router
-from app.core.database import engine, Base
-from app.database.init_db import init_db
+from app.database.database import engine, init_db  # Импортируем из правильного места
+from app.models.db.base import Base
 
 # Создаем таблицы
 Base.metadata.create_all(bind=engine)

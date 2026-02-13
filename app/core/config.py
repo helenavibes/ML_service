@@ -16,8 +16,7 @@ class Settings(BaseSettings):
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8080"]
     
-    # База данных
-    DATABASE_URL: str
+    # База данных - отдельные компоненты (не URL целиком!)
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
@@ -29,9 +28,10 @@ class Settings(BaseSettings):
     MAX_OVERFLOW: int = 10
     
     # RabbitMQ
-    RABBITMQ_URL: str
     RABBITMQ_DEFAULT_USER: str
     RABBITMQ_DEFAULT_PASS: str
+    RABBITMQ_HOST: str = "localhost"
+    RABBITMQ_PORT: int = 5672
     
     # JWT
     SECRET_KEY: str
@@ -48,5 +48,13 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+    
+    def get_database_url(self) -> str:
+        """Формирует URL для подключения к БД из компонентов"""
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+    
+    def get_rabbitmq_url(self) -> str:
+        """Формирует URL для подключения к RabbitMQ из компонентов"""
+        return f"amqp://{self.RABBITMQ_DEFAULT_USER}:{self.RABBITMQ_DEFAULT_PASS}@{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}/"
 
 settings = Settings()
