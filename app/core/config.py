@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8080"]
     
-    # База данных - отдельные компоненты (не URL целиком!)
+    # База данных - отдельные компоненты
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str

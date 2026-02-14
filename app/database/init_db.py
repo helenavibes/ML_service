@@ -19,44 +19,39 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def init_demo_data(db: Session) -> None:
     """Создание демо-пользователей и моделей"""
     
-    # 1. Создаем демо-пользователя
+    # 1. Создаем демо-пользователя с правильным ENUM значением
     demo_user = db.query(UserDB).filter(UserDB.username == "demo_user").first()
     if not demo_user:
         demo_user = UserDB(
             username="demo_user",
             email="demo@example.com",
             password_hash=pwd_context.hash("demo123"),
-            role=UserRole.USER,  # ✅ Используем Enum, не строку!
+            role=UserRole.USER,  # ✅ Правильное ENUM значение
             balance=100.0,
             is_active=True
         )
         db.add(demo_user)
-        db.flush()  # Получаем ID без коммита
-        logger.info("✅ Создан демо-пользователь: demo_user")
+        db.flush()
+        logger.info("✅ Создан демо-пользователь: demo_user (role: USER)")
         
         # Создаем транзакцию пополнения
         transaction = TransactionDB(
             user_id=demo_user.id,
-            transaction_type=TransactionType.DEPOSIT,  # ✅ Используем Enum
+            transaction_type=TransactionType.DEPOSIT,
             amount=100.0,
             description="Начальный баланс"
         )
         db.add(transaction)
         logger.info("✅ Создана транзакция пополнения для demo_user")
-    else:
-        # Проверяем и исправляем роль если нужно
-        if demo_user.role != UserRole.USER:
-            demo_user.role = UserRole.USER
-            logger.info("✅ Исправлена роль demo_user на USER")
     
-    # 2. Создаем администратора
+    # 2. Создаем администратора с правильным ENUM значением
     admin = db.query(UserDB).filter(UserDB.username == "admin").first()
     if not admin:
         admin = UserDB(
             username="admin",
             email="admin@example.com",
             password_hash=pwd_context.hash("admin123"),
-            role=UserRole.ADMIN,  # ✅ Используем Enum, не строку!
+            role=UserRole.ADMIN,  # ✅ Правильное ENUM значение
             balance=1000.0,
             is_active=True
         )
@@ -64,7 +59,7 @@ def init_demo_data(db: Session) -> None:
         db.flush()
         logger.info("✅ Создан администратор: admin (role: ADMIN)")
     else:
-        # Проверяем и исправляем роль если нужно
+        # Если администратор уже есть, но роль не ADMIN - исправляем
         if admin.role != UserRole.ADMIN:
             admin.role = UserRole.ADMIN
             logger.info("✅ Исправлена роль администратора на ADMIN")
@@ -116,10 +111,10 @@ def main() -> None:
         init_demo_data(db)
         logger.info("✅ Демо-данные добавлены")
         
-        # Проверка роли администратора
-        admin = db.query(UserDB).filter(UserDB.username == "admin").first()
-        if admin:
-            logger.info(f"✅ Администратор: {admin.username}, роль: {admin.role.value}")
+        # Проверка ролей
+        users = db.query(UserDB).all()
+        for user in users:
+            logger.info(f"✅ Пользователь: {user.username}, роль: {user.role.value}")
         
     except Exception as e:
         logger.error(f"❌ Ошибка: {e}")

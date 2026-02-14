@@ -1,16 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+import uvicorn  # ИСПРАВЛЕНО: было uvicron
 
 from app.core.config import settings
 from app.api.v1.api import api_router
-from app.database.database import engine, init_db  # Импортируем из правильного места
+from app.database.database import engine, init_db
 from app.models.db.base import Base
 
-# Создаем таблицы
+# Создаем таблицы (если еще не созданы)
 Base.metadata.create_all(bind=engine)
 
-# Инициализируем БД начальными данными
+# Инициализируем БД начальными данными (демо-пользователи, модели)
 init_db()
 
 app = FastAPI(

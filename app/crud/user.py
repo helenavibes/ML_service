@@ -11,7 +11,7 @@ class UserCreate(BaseModel):
     username: str
     email: str
     password: str
-    balance: float = 0.0
+    # balance не нужен при создании, будет 0.0 по умолчанию
 
 class UserUpdate(BaseModel):
     username: Optional[str] = None
@@ -34,7 +34,9 @@ class CRUDUser(CRUDBase[UserDB, UserCreate, UserUpdate]):
             username=obj_in.username,
             email=obj_in.email,
             password_hash=hashed_password,
-            balance=obj_in.balance
+            balance=0.0,  # Явно указываем начальный баланс
+            is_active=True,
+            role='USER'  # Добавляем роль по умолчанию
         )
         db.add(db_obj)
         db.commit()
