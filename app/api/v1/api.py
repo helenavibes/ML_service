@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, balance, models, predict, history
+from app.api.v1.endpoints import auth, balance, models, predict, history, tasks
 
 api_router = APIRouter()
 
@@ -9,6 +9,7 @@ api_router.include_router(balance.router, prefix="/balance", tags=["balance"])
 api_router.include_router(models.router, prefix="/models", tags=["ml-models"])
 api_router.include_router(predict.router, prefix="/predict", tags=["predictions"])
 api_router.include_router(history.router, prefix="/history", tags=["history"])
+api_router.include_router(tasks.router, prefix="/tasks", tags=["async-tasks"])
 
 @api_router.get("/health")
 async def health_check():

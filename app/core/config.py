@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_PASS: str
     RABBITMQ_HOST: str = "localhost"
     RABBITMQ_PORT: int = 5672
+    RABBITMQ_QUEUE: str = "ml_tasks"
     
     # JWT
     SECRET_KEY: str
