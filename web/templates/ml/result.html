@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-check-circle"></i> Задача создана</h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                
+                <h3 class="mt-4">Задача успешно поставлена в очередь</h3>
+                
+                <p><strong>ID задачи:</strong> <code>{{ task_id }}</code></p>
+                <p><strong>Статус:</strong> <span class="badge bg-warning text-dark">{{ status }}</span></p>
+                <p><strong>Дата создания:</strong> {{ created_at }}</p>
+                
+                <div class="mt-4">
+                    <a href="/history" class="btn btn-primary">
+                        <i class="bi bi-clock-history"></i> Смотреть историю
+                    </a>
+                    <a href="/predict" class="btn btn-outline-primary">
+                        <i class="bi bi-magic"></i> Новое предсказание
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

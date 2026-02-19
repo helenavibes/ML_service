@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2 text-center">
+        <h1 class="display-4 mb-4">ML Service Platform</h1>
+        <p class="lead">
+            Асинхронная платформа для выполнения ML задач с системой биллинга
+        </p>
+        
+        <div class="row mt-5">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-lightning-charge-fill text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Быстро</h5>
+                        <p class="card-text">Асинхронная обработка через RabbitMQ с 3 воркерами</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-credit-card-fill text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Честно</h5>
+                        <p class="card-text">Кредитная система - платите только за использование</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-cpu-fill text-primary" style="font-size: 3rem;"></i>
+                        <h5 class="card-title mt-3">Умно</h5>
+                        <p class="card-text">3 предобученные ML модели на scikit-learn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3>Доступные модели</h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Модель</th>
+                            <th>Тип</th>
+                            <th>Описание</th>
+                            <th>Стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="bi bi-chat-text"></i> Text Classifier</td>
+                            <td><span class="badge bg-info">Классификация</span></td>
+                            <td>Определяет категорию текста</td>
+                            <td><span class="badge bg-success">0.5 кредита</span></td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-graph-up"></i> Price Predictor</td>
+                            <td><span class="badge bg-warning text-dark">Регрессия</span></td>
+                            <td>Предсказывает цену</td>
+                            <td><span class="badge bg-success">1.0 кредита</span></td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-people"></i> Customer Clusterer</td>
+                            <td><span class="badge bg-secondary">Кластеризация</span></td>
+                            <td>Группирует клиентов</td>
+                            <td><span class="badge bg-success">0.8 кредита</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3>Как это работает?</h3>
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h1 class="display-6">1</h1>
+                            <p>Регистрация и пополнение баланса</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h1 class="display-6">2</h1>
+                            <p>Выбор модели и загрузка данных</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h1 class="display-6">3</h1>
+                            <p>Асинхронная обработка воркерами</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h1 class="display-6">4</h1>
+                            <p>Получение результата</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if not user %}
+        <div class="mt-5">
+            <a href="/auth/register" class="btn btn-primary btn-lg me-2">
+                <i class="bi bi-person-plus"></i> Начать работу
+            </a>
+            <a href="/auth/login" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Войти
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

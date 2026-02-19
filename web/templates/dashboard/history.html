@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">История операций</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-magic"></i> Предсказания</h5>
+            </div>
+            <div class="card-body">
+                {% if predictions %}
+                <div class="list-group">
+                    {% for pred in predictions %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span>ID: {{ pred.id[:8] }}...</span>
+                            <span class="badge bg-success">{{ pred.status }}</span>
+                        </div>
+                        <small class="text-muted">{{ pred.created_at }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center text-muted">Нет предсказаний</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-arrow-left-right"></i> Транзакции</h5>
+            </div>
+            <div class="card-body">
+                {% if transactions %}
+                <div class="list-group">
+                    {% for t in transactions %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span>{{ t.transaction_type }}</span>
+                            <span class="badge bg-success">{{ t.amount }}</span>
+                        </div>
+                        <small class="text-muted">{{ t.created_at }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center text-muted">Нет транзакций</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

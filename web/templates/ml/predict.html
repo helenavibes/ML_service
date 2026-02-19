@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Предсказание</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-magic"></i> Новое предсказание</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/predict">
+                    <div class="mb-3">
+                        <label class="form-label">Выберите модель</label>
+                        <select class="form-select" name="model_id" required>
+                            <option value="">-- Выберите модель --</option>
+                            {% for model in models %}
+                            <option value="{{ model.id }}">{{ model.name }} ({{ model.cost_per_prediction }} кредитов)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Параметр x1</label>
+                                <input type="number" step="0.01" class="form-control" name="x1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Параметр x2</label>
+                                <input type="number" step="0.01" class="form-control" name="x2" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-magic"></i> Выполнить предсказание
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Баланс</h5>
+            </div>
+            <div class="card-body text-center">
+                <h2>{{ balance }}</h2>
+                <p>кредитов</p>
+                <a href="/balance" class="btn btn-success btn-sm">Пополнить</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
