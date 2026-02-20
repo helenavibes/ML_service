@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     # RabbitMQ
     RABBITMQ_DEFAULT_USER: str
     RABBITMQ_DEFAULT_PASS: str
-    RABBITMQ_HOST: str = "localhost"
+    RABBITMQ_HOST: str = "rabbitmq"
     RABBITMQ_PORT: int = 5672
     RABBITMQ_QUEUE: str = "ml_tasks"
     
