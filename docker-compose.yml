@@ -7,6 +7,7 @@ services:
       - .env
     volumes:
       - ./app:/app/app
+      - ./web:/app/web
       - ./logs:/app/logs
     depends_on:
       database:
@@ -81,24 +82,16 @@ services:
       timeout: 10s
       retries: 3
 
-  worker:
-    build:
-      context: ./workers
-      dockerfile: Dockerfile
+  worker-1:
+    build: .
+    container_name: ml_service_worker_1
     restart: unless-stopped
     env_file:
       - .env
-    environment:
-      - PYTHONPATH=/app
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
-      - RABBITMQ_QUEUE=ml_tasks
     volumes:
-      - ./workers:/app
       - ./app:/app/app
-      - ./logs/worker:/app/logs
+      - ./workers:/app/workers
+      - ./logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -106,9 +99,45 @@ services:
         condition: service_healthy
     networks:
       - ml_network
-    deploy:
-      mode: replicated
-      replicas: 3
+    command: python -m workers.worker --id worker-1
+
+  worker-2:
+    build: .
+    container_name: ml_service_worker_2
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app/app
+      - ./workers:/app/workers
+      - ./logs:/app/logs
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    networks:
+      - ml_network
+    command: python -m workers.worker --id worker-2
+
+  worker-3:
+    build: .
+    container_name: ml_service_worker_3
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app/app
+      - ./workers:/app/workers
+      - ./logs:/app/logs
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    networks:
+      - ml_network
+    command: python -m workers.worker --id worker-3
 
 volumes:
   postgres_data:
@@ -119,3 +148,4 @@ volumes:
 networks:
   ml_network:
     driver: bridge
+    name: ml_service_ml_network

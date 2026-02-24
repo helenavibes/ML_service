@@ -13,7 +13,8 @@ COPY requirements.txt .
 
 # Устанавливаем Python зависимости
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir pydantic[email]
 
 # Копируем приложение
 COPY ./app /app/app

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn  # ИСПРАВЛЕНО: было uvicron
+from fastapi.staticfiles import StaticFiles
+import uvicorn
 
 from app.core.config import settings
 from app.api.v1.api import api_router
@@ -21,6 +22,9 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Подключаем статические файлы
+app.mount("/static", StaticFiles(directory="web/static"), name="static")
+
 # CORS
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -31,20 +35,16 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# Подключаем роутеры
+# Подключаем API роуты (ПРЕДИКАТЕЛЬНО - сначала API)
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-@app.get("/")
-async def root():
-    return {
-        "message": "ML Service Platform",
-        "version": settings.VERSION,
-        "docs": "/docs",
-        "api": f"{settings.API_V1_STR}"
-    }
+# Подключаем web роуты (ПОСЛЕ API)
+from app.web.routes import router as web_router
+app.include_router(web_router)
 
 @app.get("/health")
 async def health_check():
+    """Проверка работоспособности API"""
     return {"status": "healthy"}
 
 if __name__ == "__main__":
